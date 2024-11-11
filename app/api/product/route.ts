@@ -2,27 +2,29 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const user = await prisma.user.findMany();
-  return NextResponse.json(user);
+  const product = await prisma.product.findMany();
+  return NextResponse.json(product);
 }
 
 export async function POST(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const email = searchParams.get("email") || "";
-    const fullName = searchParams.get("fullName") || "";
-    const password = searchParams.get("password") || "";
+    const name = searchParams.get("name") || "";
+    const description = searchParams.get("description") || "";
+    const price = searchParams.get("price") || "";
     const username = searchParams.get("username") || "";
 
-    const newUser = await prisma.user.create({
+    const priceFloat = parseFloat(price);
+
+    const newProduct = await prisma.product.create({
       data: {
-        email,
-        fullName,
-        password,
+        name,
+        description,
+        price: priceFloat,
         username,
       },
     });
-    return NextResponse.json(newUser);
+    return NextResponse.json(newProduct);
   } catch (error) {
     console.error("Error creating product:", error);
     return NextResponse.json(
@@ -35,23 +37,26 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const email = searchParams.get("email") || "";
-    const fullName = searchParams.get("fullName") || "";
-    const password = searchParams.get("password") || "";
+    const id = searchParams.get("id") || "";
+    const name = searchParams.get("name") || "";
+    const description = searchParams.get("description") || "";
+    const price = searchParams.get("price") || "";
     const username = searchParams.get("username") || "";
 
-    const newUser = await prisma.user.update({
+    const priceFloat = parseFloat(price);
+
+    const newProduct = await prisma.product.update({
       data: {
-        email,
-        fullName,
-        password,
+        name,
+        description,
+        price: priceFloat,
         username,
       },
       where: {
-        username,
+        id,
       },
     });
-    return NextResponse.json(newUser);
+    return NextResponse.json(newProduct);
   } catch (error) {
     console.error("Error creating product:", error);
     return NextResponse.json(
@@ -64,14 +69,14 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const username = searchParams.get("username") || "";
+    const id = searchParams.get("id") || "";
 
-    const newUser = await prisma.user.delete({
+    const newProduct = await prisma.product.delete({
       where: {
-        username,
+        id,
       },
     });
-    return NextResponse.json(newUser);
+    return NextResponse.json(newProduct);
   } catch (error) {
     console.error("Error creating product:", error);
     return NextResponse.json(
