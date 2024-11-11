@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
-const prisma=new PrismaClient();
 
 // Fungsi untuk membaca semua produk yang ada
 export async function GET(req: NextRequest) {
@@ -9,40 +7,48 @@ export async function GET(req: NextRequest) {
     const products = await prisma.product.findMany();
     return NextResponse.json(products);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+    console.log(error);
+    return NextResponse.json(
+      { error: "Failed to fetch products" },
+      { status: 500 },
+    );
   }
 }
 
 // Fungsi untuk membuat produk baru
+
 export async function POST(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-    const name = searchParams.get("name") || "";
-    const description = searchParams.get("description");
-    const price = searchParams.get("price") || "";
-    const userId = searchParams.get("userId") || "";
-    const priceFloat = parseFloat(price)
-    
-    console.log(name)
-    console.log(description)
-    console.log(priceFloat)
-    console.log(userId)
 
-    const newProduct = await prisma.product.create({
+    const email = searchParams.get("email") || "";
+    const fullName = searchParams.get("fullName") || "";
+    const password = searchParams.get("password") || "";
+    const username = searchParams.get("username") || "";
+
+    console.log("email:", email);
+    console.log(fullName);
+    console.log(password);
+    console.log(username);
+    const newProduct = await prisma.user.create({
       data: {
-        name: "Cek",
-        description: "Cek123",
-        price: 10,
-        userId: "20",
+        username,
+        password,
+        email,
+        fullName,
       },
     });
 
-    console.log(newProduct)
-    // return NextResponse.json({"input": name});
-    return NextResponse.json("aaa");
+    // Return the created product
+    return NextResponse.json({ product: newProduct }, { status: 201 });
   } catch (error) {
-    console.log(error)
-    return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+    console.error("Error creating product:", error);
+    return NextResponse.json(
+      { error: "Failed to create product" },
+      { status: 500 },
+    );
+  } finally {
+    await prisma.$disconnect();
   }
-
 }
+
