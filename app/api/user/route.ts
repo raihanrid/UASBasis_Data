@@ -40,6 +40,8 @@ export async function PUT(req: NextRequest) {
     const password = searchParams.get("password") || "";
     const username = searchParams.get("username") || "";
 
+    console.log("searchParams", searchParams);
+
     const newUser = await prisma.user.update({
       data: {
         email,
@@ -53,9 +55,9 @@ export async function PUT(req: NextRequest) {
     });
     return NextResponse.json(newUser);
   } catch (error) {
-    console.error("Error creating product:", error);
+    console.error("Error updating user:", error);
     return NextResponse.json(
-      { error: "Failed to create product" },
+      { error: "Failed to update user" },
       { status: 500 },
     );
   }

@@ -2,16 +2,33 @@
 import React, { useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { IconBrandGoogle } from "@tabler/icons-react";
-import Link from "next/link";
 import { BottomGradient } from "../misc/bottom-gradient";
 import { LabelInputContainer } from "../misc/label-input-container";
 import axios from "axios";
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { useRouter } from "next/navigation";
 
-export default function SignupForm() {
+interface ProfileFormProps {
+  userData: {
+    username: string;
+    password: string;
+    email: string;
+    fullName: string;
+  };
+}
+export default function ProfileForm({ userData }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -23,7 +40,7 @@ export default function SignupForm() {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      const response = await axios.post("/api/user", null, {
+      const response = await axios.put("/api/user", null, {
         params: {
           email: data.email,
           fullName: data.fullName,
@@ -32,17 +49,14 @@ export default function SignupForm() {
         },
       });
 
-      const responseSignin = await axios.post("/api/login", null, {
+      await axios.post("/api/login", null, {
         params: {
           username: data.username,
           password: data.password,
         },
       });
 
-      if (responseSignin) {
-        router.push("/");
-        router.refresh();
-      }
+      router.refresh();
       console.log("Registration successful:", response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -56,10 +70,61 @@ export default function SignupForm() {
     }
   };
 
+  const handleDelete = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.delete("/api/user", {
+        params: {
+          username: userData.username,
+        },
+      });
+
+      const responseLogout = await axios.post("/api/logout", null, {});
+      console.log(responseLogout);
+
+      console.log("Account deleted successfully:", response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.error || "Failed to delete account");
+      } else {
+        setError("An unexpected error occurred while deleting the account");
+      }
+      console.error("Delete error:", error);
+    } finally {
+      setIsLoading(false);
+      setIsDeleteDialogOpen(false);
+      router.push("/");
+      router.refresh();
+    }
+  };
+
+  const handleSignout = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const responseLogout = await axios.post("/api/logout", null, {});
+      console.log(responseLogout);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data?.error || "Failed to delete account");
+      } else {
+        setError("An unexpected error occurred while deleting the account");
+      }
+      console.error("Delete error:", error);
+    } finally {
+      setIsLoading(false);
+      setIsDeleteDialogOpen(false);
+      router.push("/signin");
+    }
+  };
+
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Signup ke <span className="font-black text-foreground">pelelang</span>
+        Profile anda
       </h2>
 
       {error && (
@@ -80,6 +145,7 @@ export default function SignupForm() {
             placeholder="Mohammad Rizaldy"
             type="text"
             required
+            defaultValue={userData.fullName}
             disabled={isLoading}
           />
         </LabelInputContainer>
@@ -91,6 +157,7 @@ export default function SignupForm() {
             placeholder="mozaldy"
             type="text"
             required
+            value={userData.username}
             disabled={isLoading}
           />
         </LabelInputContainer>
@@ -102,6 +169,7 @@ export default function SignupForm() {
             placeholder="moxaldy@pelelang.com"
             type="email"
             required
+            defaultValue={userData.email}
             disabled={isLoading}
           />
         </LabelInputContainer>
@@ -113,6 +181,7 @@ export default function SignupForm() {
             placeholder="••••••••"
             type="password"
             required
+            defaultValue={userData.password}
             disabled={isLoading}
           />
         </LabelInputContainer>
@@ -123,31 +192,53 @@ export default function SignupForm() {
           type="submit"
           disabled={isLoading}
         >
-          {isLoading ? "Signing up..." : "Sign up"}
+          {isLoading ? "Updating..." : "Update"}
           <BottomGradient />
         </button>
 
-        <p className="text-neutral-600 text-sm max-w-sm mt-5 text-center dark:text-neutral-300">
-          Already have an account?{" "}
-          <Link href={"/signin"} className="font-black">
-            Sign In.
-          </Link>
-        </p>
         <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
         <div className="flex flex-col space-y-4">
-          <button
-            className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="button"
-            onClick={() => {
-              console.log("Google sign in clicked");
-            }}
+          <Button
+            variant="outline"
+            className="border-red-500"
+            onClick={handleSignout}
           >
-            <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-            <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-              Google
-            </span>
-            <BottomGradient />
-          </button>
+            Sign Out
+          </Button>
+          <Dialog
+            open={isDeleteDialogOpen}
+            onOpenChange={setIsDeleteDialogOpen}
+          >
+            <DialogTrigger asChild>
+              <Button variant="destructive">Delete Account</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Are you sure you want to delete your account?
+                </DialogTitle>
+                <DialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Deleting..." : "Delete Account"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </form>
     </div>
