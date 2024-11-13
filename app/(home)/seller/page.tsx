@@ -64,7 +64,10 @@ export default function ProductsCRUD() {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("/api/product");
+      const username = cookies.user?.username || "";
+      const response = await axios.get("/api/product", {
+        params: { username },
+      });
       setProducts(response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
