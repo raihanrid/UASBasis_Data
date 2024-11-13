@@ -2,7 +2,18 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const product = await prisma.product.findMany();
+  const searchParams = req.nextUrl.searchParams;
+  const username = searchParams.get("username") || "";
+  let product;
+  if (username) {
+    product = await prisma.product.findMany({
+      where: {
+        username,
+      },
+    });
+  } else {
+    product = await prisma.product.findMany();
+  }
   return NextResponse.json(product);
 }
 
