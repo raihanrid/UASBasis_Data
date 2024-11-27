@@ -3,7 +3,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    remotePatterns: [{ hostname: "upload.wikimedia.org" }],
+    remotePatterns: [{ hostname: "*" }],
   },
   /* config options here */
 };

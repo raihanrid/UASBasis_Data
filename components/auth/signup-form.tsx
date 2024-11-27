@@ -59,7 +59,7 @@ export default function SignupForm() {
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Signup ke <span className="font-black text-foreground">pelelang</span>
+        Signup ke <span className="font-black text-foreground">Lelangku</span>
       </h2>
 
       {error && (
@@ -77,7 +77,7 @@ export default function SignupForm() {
           <Input
             id="firstname"
             name="fullName"
-            placeholder="Mohammad Rizaldy"
+            placeholder="Raihan Ridho"
             type="text"
             required
             disabled={isLoading}
@@ -88,7 +88,7 @@ export default function SignupForm() {
           <Input
             id="lastname"
             name="username"
-            placeholder="mozaldy"
+            placeholder="raihanrid"
             type="text"
             required
             disabled={isLoading}
@@ -99,7 +99,7 @@ export default function SignupForm() {
           <Input
             id="email"
             name="email"
-            placeholder="moxaldy@pelelang.com"
+            placeholder="raihanrid@pelelang.com"
             type="email"
             required
             disabled={isLoading}
@@ -128,7 +128,7 @@ export default function SignupForm() {
         </button>
 
         <p className="text-neutral-600 text-sm max-w-sm mt-5 text-center dark:text-neutral-300">
-          Already have an account?{" "}
+          Already Have An Account?{" "}
           <Link href={"/signin"} className="font-black">
             Sign In.
           </Link>

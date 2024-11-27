@@ -142,7 +142,7 @@ export default function ProfileForm({ userData }: ProfileFormProps) {
           <Input
             id="firstname"
             name="fullName"
-            placeholder="Mohammad Rizaldy"
+            placeholder="Raihan Ridho"
             type="text"
             required
             defaultValue={userData.fullName}
@@ -154,7 +154,7 @@ export default function ProfileForm({ userData }: ProfileFormProps) {
           <Input
             id="lastname"
             name="username"
-            placeholder="mozaldy"
+            placeholder="raihanrid"
             type="text"
             required
             value={userData.username}
@@ -166,7 +166,7 @@ export default function ProfileForm({ userData }: ProfileFormProps) {
           <Input
             id="email"
             name="email"
-            placeholder="moxaldy@pelelang.com"
+            placeholder="raihanrid@pelelang.com"
             type="email"
             required
             defaultValue={userData.email}

@@ -54,7 +54,7 @@ export default function SigninForm() {
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Sign in ke <span className="font-black text-foreground">pelelang</span>
+        Sign in ke <span className="font-black text-foreground">Lelangku</span>
       </h2>
 
       {error && (
@@ -72,7 +72,7 @@ export default function SigninForm() {
           <Input
             id="username"
             name="username"
-            placeholder="mozaldy"
+            placeholder="raihanrid"
             type="text"
             required
             disabled={isLoading}
@@ -100,7 +100,7 @@ export default function SigninForm() {
           <BottomGradient />
         </button>
         <p className="text-neutral-600 text-sm max-w-sm mt-5 text-center dark:text-neutral-300">
-          No account yet?{" "}
+          No Account Yet?{" "}
           <Link href={"/signup"} className="font-black">
             Sign up.
           </Link>
