@@ -11,6 +11,8 @@ interface Product {
   price: number;
   createdAt: string;
   username: string;
+  id: string;
+  imageUrl: string;
 }
 
 export default function ExpandableCardDemo() {
@@ -101,6 +103,7 @@ export default function ExpandableCardDemo() {
                   width={200}
                   height={200}
                   src={
+                    active.imageUrl ||
                     "https://upload.wikimedia.org/wikipedia/commons/0/01/Teh_Botol_Sosro.jpg"
                   }
                   alt={active.name}
@@ -130,7 +133,7 @@ export default function ExpandableCardDemo() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    href={"/"}
+                    href={`products/${active.id}`}
                     target="_blank"
                     className="px-4 py-3 text-sm rounded-full font-bold bg-slate-500 text-white"
                   >
@@ -157,7 +160,7 @@ export default function ExpandableCardDemo() {
         {products.map((card, index) => (
           <motion.div
             layoutId={`card-${card.name}-${id}`}
-            key={card.name}
+            key={index}
             onClick={() => setActive(card)}
             className="p-4 flex flex-col  hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
           >
@@ -167,6 +170,7 @@ export default function ExpandableCardDemo() {
                   width={100}
                   height={100}
                   src={
+                    card.imageUrl ||
                     "https://upload.wikimedia.org/wikipedia/commons/0/01/Teh_Botol_Sosro.jpg"
                   }
                   alt={card.name}

@@ -24,6 +24,9 @@ export async function POST(req: NextRequest) {
     const description = searchParams.get("description") || "";
     const price = searchParams.get("price") || "";
     const username = searchParams.get("username") || "";
+    const imageUrl = searchParams.get("imageUrl") || "";
+
+    console.log(imageUrl);
 
     const priceFloat = parseFloat(price);
 
@@ -33,6 +36,7 @@ export async function POST(req: NextRequest) {
         description,
         price: priceFloat,
         username,
+        imageUrl,
       },
     });
     return NextResponse.json(newProduct);

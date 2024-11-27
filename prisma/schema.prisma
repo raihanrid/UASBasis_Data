@@ -21,6 +21,7 @@ model Product {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
+  imageUrl    String?
   price       Float
   createdAt   DateTime  @default(now())
   username    String

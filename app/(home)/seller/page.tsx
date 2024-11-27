@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -29,6 +30,7 @@ type Product = {
   name: string;
   description: string;
   price: number;
+  imageUrl?: string; // Make imageUrl optional
   username: string;
 };
 
@@ -36,11 +38,13 @@ type ProductFormData = {
   name: string;
   description: string;
   price: string;
+  imageUrl?: string; // Make imageUrl optional
   username: string;
 };
 
 export default function ProductsCRUD() {
   const [products, setProducts] = useState<Product[]>([]);
+
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -85,6 +89,7 @@ export default function ProductsCRUD() {
       name: formData.get("name") as string,
       description: formData.get("description") as string,
       price: formData.get("price") as string,
+      imageUrl: (formData.get("imageUrl") as string) || undefined,
       username: cookies.user?.username || "",
     };
 
@@ -109,6 +114,7 @@ export default function ProductsCRUD() {
   };
 
   const createProduct = async (data: ProductFormData) => {
+    console.log(data);
     await axios.post("/api/product", null, { params: data });
   };
 
@@ -145,12 +151,10 @@ export default function ProductsCRUD() {
     setIsEditOpen(true);
   };
 
-  // Don't render anything until we confirm we're on the client
   if (!isClient) {
     return null;
   }
 
-  // Check for authentication after we know we're on the client
   if (!cookies.user) {
     return null;
   }
@@ -207,6 +211,7 @@ export default function ProductsCRUD() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Image</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Price</TableHead>
@@ -217,6 +222,18 @@ export default function ProductsCRUD() {
         <TableBody>
           {products.map((product) => (
             <TableRow key={product.id}>
+              <TableCell>
+                <Image
+                  src={
+                    product.imageUrl ||
+                    "https://upload.wikimedia.org/wikipedia/commons/0/01/Teh_Botol_Sosro.jpg"
+                  }
+                  width={100}
+                  height={100}
+                  alt={product.name}
+                  className="w-16 h-16 object-cover rounded"
+                />
+              </TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.description}</TableCell>
               <TableCell>${product.price.toFixed(2)}</TableCell>
@@ -303,6 +320,16 @@ function ProductForm({
           placeholder="Product price"
           defaultValue={initialData?.price}
           required
+          disabled={isLoading}
+        />
+      </div>
+      <div>
+        <Label htmlFor="imageUrl">Image URL (Optional)</Label>
+        <Input
+          id="imageUrl"
+          name="imageUrl"
+          placeholder="https://example.com/image.jpg"
+          defaultValue={initialData?.imageUrl}
           disabled={isLoading}
         />
       </div>
